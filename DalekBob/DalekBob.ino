@@ -9,19 +9,7 @@
  * a bad idea. So you should try to use esp8266/Arduino functionality
  * where possible instead, in order to abstract away the hardware dependency.
  */
-
-
-//CrossPlatform Packet Definitions
-struct
-{
-  byte byPacketSize = 7;
-  byte byPacketVersion = 1;
-  byte byPacketCheckSum;
-  byte byPacketID;
-  byte byDeviceID;
-  byte byPacketDataX, byPacketDataY, byPacketDataZ;
-}
- 
+#include "Includes/Packets.h"
 
 // Expose Espressif SDK functionality - wrapped in ifdef so that it still
 // compiles on other platforms
