@@ -9,38 +9,30 @@
  * a bad idea. So you should try to use esp8266/Arduino functionality
  * where possible instead, in order to abstract away the hardware dependency.
  */
-
-
-//CrossPlatform Packet Definitions
-struct
-{
-  byte byPacketSize = 7;
-  byte byPacketVersion = 1;
-  byte byPacketCheckSum;
-  byte byPacketID;
-  byte byDeviceID;
-  byte byPacketDataX, byPacketDataY, byPacketDataZ;
-}
- 
+//include <Packets.h>
 
 // Expose Espressif SDK functionality - wrapped in ifdef so that it still
 // compiles on other platforms
-#ifdef ESP8266
-extern "C" {
-#include "user_interface.h"
-}
-#endif
-
 void setup() {
   Serial.begin(115200);
 }
-
+unsigned long ulLastMessageTime;
 void loop() {
+  unsigned long ulThisLoopTime = millis();
   // Call Espressif SDK functionality - wrapped in ifdef so that it still
   // compiles on other platforms
-#ifdef ESP8266
-  Serial.print("wifi_station_get_hostname: ");
-  Serial.println(wifi_station_get_hostname());
-#endif
-  delay(1000);
+   if (Serial.available()) {
+    ulLastMessageTime = millis();
+    int inByte = Serial.read();
+    Serial.write("Recieved byte ");
+    Serial.write(inByte);
+    Serial.write("\n\r");
+  }
+  if(ulLastMessageTime < ulThisLoopTime - ((unsigned long)5000))
+  {
+    ulLastMessageTime = millis();
+    Serial.write("Recieve timeout");
+    Serial.write("\n\r");
+  }
+  delay(10);
 }
