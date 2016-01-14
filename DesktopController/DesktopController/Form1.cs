@@ -91,5 +91,36 @@ namespace DesktopController
 		{
 			UpdateMotors();
 		}
+
+		private void Form1_KeyUp(object sender, KeyEventArgs e)
+		{
+			sbRotation.Value= 0;
+			sbDriveSpeed.Value = 0;
+			UpdateMotors();
+		}
+
+		private void Form1_KeyPress(object sender, KeyPressEventArgs e)
+		{
+		}
+
+		private void Form1_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.W || e.KeyCode == Keys.Up)
+			{
+				sbDriveSpeed.Value = -127;
+			}
+			else if (e.KeyCode == Keys.A || e.KeyCode == Keys.Left)
+			{
+				sbRotation.Value = -127;
+			}
+			else if (e.KeyCode == Keys.D || e.KeyCode == Keys.Right)
+			{
+				sbRotation.Value = 127;
+			}
+			else if (e.KeyCode == Keys.S || e.KeyCode == Keys.Down)
+			{
+				sbDriveSpeed.Value = 127;
+			}
+		}
 	}
 }
