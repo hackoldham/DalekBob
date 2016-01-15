@@ -1,0 +1,34 @@
+Packet Format information
+UDP, port 8080
+
+struct SDalekMotorPacket
+
+{
+
+  byte byPacketSize = 8;
+
+  byte byPacketVersion = 1;
+
+  byte byPacketID;
+
+  byte byDeviceID;
+
+  byte byPacketDataX, byPacketDataY, byPacketDataZ;
+
+  int i16PacketRC = 0;
+
+};
+
+byPacketSize 
+	The first byte in the packet, contains the count of bytes after this initial
+byPacketVersion
+	Version of the packet information, to ensure Transmitters and recievers are up to date with each other
+byPacketID
+	an auto-incrementing Packet-ID, The reciever won't process packetIDs after it has processed a later one
+byDeviceID;
+	A reciever is attached to a multi-drop network with multiple output nodes, this ID differentiates which node should process this packet
+byPacketDataX, byPacketDataY, byPacketDataZ;
+	Actual data bytes to be written to the nodes
+i16PacketRC 
+	A CRC16 of the packet not including this CRC
+

@@ -2,7 +2,7 @@
 //CrossPlatform Packet Definitions
 struct SDalekMotorPacket
 {
-  byte byPacketSize = 7;
+  byte byPacketSize = 8;
   byte byPacketVersion = 1;
   byte byPacketID;
   byte byDeviceID;
