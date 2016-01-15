@@ -19,6 +19,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include <ESP8266WiFi.h>
+#include <WiFiUdp.h>
 #include "Packets.h"
 
 //how many clients should be able to telnet to this ESP8266
@@ -26,66 +27,42 @@
 const char* ssid = "DalekBob";
 const char* password = "Exterminate";
 
-WiFiServer server(23);
-WiFiClient serverClients[MAX_SRV_CLIENTS];
+WiFiUDP broadcastListener;
+SDalekMotorPacket packetStorage;
 
 void setup() {
-  Serial1.begin(115200);
-  WiFi.begin(ssid, password);
-  Serial1.print("\nConnecting to "); Serial1.println(ssid);
-  uint8_t i = 0;
-  while (WiFi.status() != WL_CONNECTED && i++ < 20) delay(500);
-  if(i == 21){
-    Serial1.print("Could not connect to"); Serial1.println(ssid);
-    while(1) delay(500);
-  }
-  //start UART and the server
+  //Debug output
   Serial.begin(115200);
-  server.begin();
-  server.setNoDelay(true);
+  Serial.setDebugOutput(true);
   
-  Serial1.print("Ready! Use 'telnet ");
-  Serial1.print(WiFi.localIP());
-  Serial1.println(" 23' to connect");
+  //Data output
+  Serial1.begin(115200);
+
+  //Host Wifi network
+  WiFi.softAP(ssid, password);
+  //Listen for UDP Packets
+  broadcastListener.begin(8080);
+  
 }
 
 void loop() {
-  uint8_t i;
-  //check if there are any new clients
-  if (server.hasClient()){
-    for(i = 0; i < MAX_SRV_CLIENTS; i++){
-      //find free/disconnected spot
-      if (!serverClients[i] || !serverClients[i].connected()){
-        if(serverClients[i]) serverClients[i].stop();
-        serverClients[i] = server.available();
-        Serial1.print("New client: "); Serial1.print(i);
-        continue;
-      }
+  if(broadcastListener.available() >= sizeof(SDalekMotorPacket))
+  {
+    broadcastListener.read((char*)&packetStorage, sizeof(SDalekMotorPacket));
+    int i16CurrentCRC = packetStorage.i16PacketRC;
+    AddCRC(&packetStorage);
+    if(packetStorage.i16PacketRC)
+    {
+      Serial.print("Packet failed checksum!\n\r");
+      //Dump all the things
+      while(broadcastListener.available())
+        broadcastListener.read();
     }
-    //no free/disconnected spot so reject
-    WiFiClient serverClient = server.available();
-    serverClient.stop();
-  }
-  //check clients for data
-  for(i = 0; i < MAX_SRV_CLIENTS; i++){
-    if (serverClients[i] && serverClients[i].connected()){
-      if(serverClients[i].available()){
-        //get data from the telnet client and push it to the UART
-        while(serverClients[i].available()) Serial.write(serverClients[i].read());
-      }
-    }
-  }
-  //check UART for data
-  if(Serial.available()){
-    size_t len = Serial.available();
-    uint8_t sbuf[len];
-    Serial.readBytes(sbuf, len);
-    //push UART data to all connected telnet clients
-    for(i = 0; i < MAX_SRV_CLIENTS; i++){
-      if (serverClients[i] && serverClients[i].connected()){
-        serverClients[i].write(sbuf, len);
-        delay(1);
-      }
+    else
+    {
+      Serial.print("Packet passed checksum!\n\r");
+      packetStorage.i16PacketRC = i16CurrentCRC;
+      Serial1.write((char*)&packetStorage, sizeof(SDalekMotorPacket));
     }
   }
 }

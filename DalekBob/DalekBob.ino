@@ -67,11 +67,17 @@ void loop() {
   if(ulLastMessageTime < ulThisLoopTime - ((unsigned long)5000))
   {
     ulLastMessageTime = ulThisLoopTime;
-    cBytesOfCurrentPacketObtained = 0;
-    cmLeftMotor.SetMotorSpeed(0);
-    cmRightMotor.SetMotorSpeed(0);
-    Serial.write("Recieve timeout");
-    Serial.write("\n\r");
+    if(cBytesOfCurrentPacketObtained > 0)
+    {
+      cBytesOfCurrentPacketObtained = 0;
+      Serial.write("Recieve timeout: Packet Cleared\n\r");
+    }
+    else
+    {
+      cmLeftMotor.SetMotorSpeed(0);
+      cmRightMotor.SetMotorSpeed(0);
+      Serial.write("Recieve timeout: Motor Shutdown\n\r");
+    }
   }
   delay(10);
 }
