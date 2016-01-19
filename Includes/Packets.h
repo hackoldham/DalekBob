@@ -2,11 +2,11 @@
 //CrossPlatform Packet Definitions
 struct SDalekMotorPacket
 {
-  byte byPacketSize = 8;
-  byte byPacketVersion = 1;
-  byte byPacketID;
-  byte byDeviceID;
-  byte byPacketDataX, byPacketDataY, byPacketDataZ;
+  uint8_t byPacketSize = 8;
+  uint8_t byPacketVersion = 1;
+  uint8_t byPacketID;
+  uint8_t byDeviceID;
+  uint8_t byPacketDataX, byPacketDataY, byPacketDataZ;
   int i16PacketRC = 0;
 };
  
