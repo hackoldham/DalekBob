@@ -1,9 +1,9 @@
-/* 
+/*
   WiFiTelnetToSerial - Example Transparent UART to Telnet Server for esp8266
 
   Copyright (c) 2015 Hristo Gochkov. All rights reserved.
   This file is part of the ESP8266WiFi library for Arduino environment.
- 
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -34,7 +34,7 @@ void setup() {
   //Debug output
   Serial.begin(115200);
   Serial.setDebugOutput(true);
-  
+
   //Data output
   Serial1.begin(115200);
 
@@ -42,20 +42,20 @@ void setup() {
   WiFi.softAP(ssid, password);
   //Listen for UDP Packets
   broadcastListener.begin(8080);
-  
+
 }
 
 void loop() {
-  if(broadcastListener.available() >= sizeof(SDalekMotorPacket))
+  if (broadcastListener.available() >= sizeof(SDalekMotorPacket))
   {
     broadcastListener.read((char*)&packetStorage, sizeof(SDalekMotorPacket));
     int i16CurrentCRC = packetStorage.i16PacketRC;
     AddCRC(&packetStorage);
-    if(packetStorage.i16PacketRC)
+    if (packetStorage.i16PacketRC)
     {
       Serial.print("Packet failed checksum!\n\r");
       //Dump all the things
-      while(broadcastListener.available())
+      while (broadcastListener.available())
         broadcastListener.read();
     }
     else
