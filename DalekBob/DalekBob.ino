@@ -18,7 +18,8 @@ CMotor cmRightMotor(7,8,6,9);
   
 // Expose Espressif SDK functionality - wrapped in ifdef so that it still
 // compiles on other platforms
-
+unsigned long ulLastData;
+unsigned long ulLastPacket;
 
 unsigned long ulLastMessageTime;
 SDalekMotorPacket LastRecievedPacket;
@@ -35,13 +36,13 @@ void setup() {
 
 void loop() {
   unsigned long ulThisLoopTime = millis();
-  // Call Espressif SDK functionality - wrapped in ifdef so that it still
-  // compiles on other platforms
-   if (Serial.available()) {
-    ulLastMessageTime = ulThisLoopTime;
+
+  if (Serial.available()) {
+    ulLastData = ulThisLoopTime;
+  
     char inByte = Serial.read();
-    
     ((unsigned char*)&CurrentAssemblingPacket)[cBytesOfCurrentPacketObtained] = inByte;
+    
     if(++cBytesOfCurrentPacketObtained == sizeof(SDalekMotorPacket))
     {
       cBytesOfCurrentPacketObtained = 0;
@@ -49,6 +50,7 @@ void loop() {
       AddCRC(&LastRecievedPacket);
       if(LastRecievedPacket.i16PacketRC == 0)
       {
+        ulLastPacket = ulThisLoopTime;
         Serial.write("Packet recieved, passed CRC\n\r ");
         cmLeftMotor.SetMotorSpeed(LastRecievedPacket.byPacketDataX);
         cmRightMotor.SetMotorSpeed(LastRecievedPacket.byPacketDataY);
@@ -63,21 +65,18 @@ void loop() {
     }
     
   }
+  
   if(ulThisLoopTime > (unsigned long)5000)
-  if(ulLastMessageTime < ulThisLoopTime - ((unsigned long)5000))
+  if(ulThisLoopTime - ulLastData > ((unsigned long)1000))
   {
-    ulLastMessageTime = ulThisLoopTime;
-    if(cBytesOfCurrentPacketObtained > 0)
-    {
-      cBytesOfCurrentPacketObtained = 0;
-      Serial.write("Recieve timeout: Packet Cleared\n\r");
-    }
-    else
-    {
+    cBytesOfCurrentPacketObtained = 0;
+  }
+  if(ulThisLoopTime - ulLastPacket > ((unsigned long) 5000))
+  {
+      ulLastData  = ulLastPacket = ulThisLoopTime;
       cmLeftMotor.SetMotorSpeed(0);
       cmRightMotor.SetMotorSpeed(0);
       Serial.write("Recieve timeout: Motor Shutdown\n\r");
-    }
   }
   delay(10);
 }
