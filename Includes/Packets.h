@@ -1,4 +1,7 @@
-
+#ifdef ESP8266
+#include "Arduino.h"
+#else
+#endif
 //CrossPlatform Packet Definitions
 struct SDalekMotorPacket
 {
