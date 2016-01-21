@@ -16,8 +16,11 @@ namespace DesktopController
 		}
 		void UpdateMotors()
 		{
+			byte byLMotor=0;
+			byte byRMotor = 0;
 			if (sbDriveSpeed.Value != 0)
 			{
+				byLMotor = byRMotor = (byte)sbDriveSpeed.Value;
 				if (sbDriveSpeed.Value > 0)
 				{
 					
@@ -34,6 +37,8 @@ namespace DesktopController
 			}
 			else if (sbRotation.Value != 0)
 			{
+				byLMotor = (byte)sbRotation.Value;
+				byRMotor = (byte)(sbRotation.Value * -1);
 				if (sbRotation.Value > 0)
 				{
 					pbMotorL.ForeColor = Color.Green;
@@ -54,6 +59,10 @@ namespace DesktopController
 				pbMotorR.Value = 0;
 	
 			}
+			PacketAssembler nPacket = new PacketAssembler(byLMotor, byRMotor, 0);
+			textBox1.Text = "X1: 0x" + nPacket.thisPacket.byPacketDataX.ToString("X2");
+			textBox1.Text += "\n\r X2: 0x" + nPacket.thisPacket.byPacketDataY.ToString("X2");
+			textBox1.Text += "\n\r CRC: 0x" + nPacket.thisPacket.i16PacketRC.ToString("X4");
 		}
 		private void sbDriveSpeed_MouseLeave(object sender, EventArgs e)
 		{
@@ -121,6 +130,11 @@ namespace DesktopController
 			{
 				sbDriveSpeed.Value = 127;
 			}
+		}
+
+		private void sbRotation_Scroll(object sender, ScrollEventArgs e)
+		{
+
 		}
 	}
 }
