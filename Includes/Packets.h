@@ -49,9 +49,8 @@ static const unsigned short crc_table[256] = {
   0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78
 };
  #define CRC_INIT 0xFFFF
-#define CRC(crcval,newchar) crcval = (crcval >> 8) ^ \
- crc_table[(crcval ^ newchar) & 0x00ff]
-
+#define CRC(crcval,newchar) crcval = (crcval << 8) ^ \
+ crc_table[((crcval >> 8) ^ newchar)]
 unsigned short crcsum(const unsigned char* message, unsigned long length,
        unsigned short crc)
 {
