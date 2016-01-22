@@ -1,6 +1,7 @@
 #ifdef ESP8266
 #include "Arduino.h"
 #else
+#include "Arduino.h"
 #endif
 //CrossPlatform Packet Definitions
 struct SDalekMotorPacket
@@ -67,5 +68,13 @@ unsigned short crcsum(const unsigned char* message, unsigned long length,
  void AddCRC(SDalekMotorPacket* pPacket)
  {
   unsigned long crc;
+  pPacket->i16PacketRC = 0;
   crc = crcsum((unsigned char*)pPacket, sizeof(SDalekMotorPacket), CRC_INIT);
+  pPacket->i16PacketRC = crc;
+ }
+ bool CheckCRC(SDalekMotorPacket* pPacket)
+ {
+	 unsigned long crc;
+	 crc = crcsum((unsigned char*)pPacket, sizeof(SDalekMotorPacket) , CRC_INIT);
+	 return crc == 0;
  }

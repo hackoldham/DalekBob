@@ -59,10 +59,7 @@ namespace DesktopController
 				pbMotorR.Value = 0;
 	
 			}
-			PacketAssembler nPacket = new PacketAssembler(byLMotor, byRMotor, 0);
-			textBox1.Text = "X1: 0x" + nPacket.thisPacket.byPacketDataX.ToString("X2");
-			textBox1.Text += "\n\r X2: 0x" + nPacket.thisPacket.byPacketDataY.ToString("X2");
-			textBox1.Text += "\n\r CRC: 0x" + nPacket.thisPacket.i16PacketRC.ToString("X4");
+			
 		}
 		private void sbDriveSpeed_MouseLeave(object sender, EventArgs e)
 		{
@@ -136,5 +133,21 @@ namespace DesktopController
 		{
 
 		}
-	}
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            UpdateMotors();
+            PacketAssembler nPacket = new PacketAssembler((Byte)pbMotorL.Value, (Byte)pbMotorR.Value, 0);
+            if (!spUsbOut.IsOpen)
+                spUsbOut.Open();
+            spUsbOut.Write(nPacket.getBytes(), 0, nPacket.thisPacket.byPacketSize + 1);
+            while (spUsbOut.BytesToRead > 0)
+            {
+                char c = (char)spUsbOut.ReadChar();
+                if (textBox1.Text.Contains("\r"))
+                    textBox1.Text = "";
+                textBox1.Text += c;
+            }
+        }
+    }
 }

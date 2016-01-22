@@ -63,11 +63,14 @@ namespace DesktopController
 			UInt16 crc = CRC_Init;
 			crc = BuildCRC(crc, thisPacket.byPacketSize);
 			crc = BuildCRC(crc, thisPacket.byPacketVersion);
-			crc = BuildCRC(crc, thisPacket.byDeviceID);
+            crc = BuildCRC(crc, thisPacket.byPacketID);
+            crc = BuildCRC(crc, thisPacket.byDeviceID);
 			crc = BuildCRC(crc, thisPacket.byPacketDataX);
 			crc = BuildCRC(crc, thisPacket.byPacketDataY);
 			crc = BuildCRC(crc, thisPacket.byPacketDataZ);
-			thisPacket.i16PacketRC = crc;
+            crc = BuildCRC(crc, 0);
+            crc = BuildCRC(crc, 0);
+            thisPacket.i16PacketRC = crc;
 			UInt16 crcComp = BuildCRC(crc, (byte)(thisPacket.i16PacketRC >> 8));
 			crcComp = BuildCRC(crcComp, (byte)(thisPacket.i16PacketRC & 0xFF));
 			
@@ -86,8 +89,17 @@ namespace DesktopController
 			thisPacket.byPacketDataY = y;
 			thisPacket.byPacketDataZ = z;
 			AddCRC();
-			AddCRC();
 		}
-		
-	}
+        public byte[] getBytes()
+        {
+            int size = Marshal.SizeOf(thisPacket);
+            byte[] arr = new byte[size];
+
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+            Marshal.StructureToPtr(thisPacket, ptr, true);
+            Marshal.Copy(ptr, arr, 0, size);
+            Marshal.FreeHGlobal(ptr);
+            return arr;
+        }
+    }
 }
