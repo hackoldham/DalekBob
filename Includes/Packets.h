@@ -1,8 +1,7 @@
-#ifdef ESP8266
-#include "Arduino.h"
-#else
-#include "Arduino.h"
+#ifdef ARDUINO
 #endif
+#include "Arduino.h"
+
 //CrossPlatform Packet Definitions
 struct SDalekMotorPacket
 {
@@ -11,7 +10,7 @@ struct SDalekMotorPacket
   uint8_t byPacketID;
   uint8_t byDeviceID;
   uint8_t byPacketDataX, byPacketDataY, byPacketDataZ;
-  int i16PacketRC = 0;
+  uint16_t i16PacketRC = 0;
 };
  
  /* CRC16 Definitions */
@@ -50,16 +49,20 @@ static const unsigned short crc_table[256] = {
   0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78
 };
  #define CRC_INIT 0xFFFF
-#define CRC(crcval,newchar) crcval = (crcval << 8) ^ \
- crc_table[((crcval >> 8) ^ newchar)]
-unsigned short crcsum(const unsigned char* message, unsigned long length,
-       unsigned short crc)
+void CRC(uint16_t& crc, char newchar)
 {
-  unsigned long i;
-
+	uint16_t CRCShift = (crc << 8) & 0x00ff;
+	uint16_t tLookup = ((uint16_t)(crc>>8) ^ newchar) & 0x00ff;
+	
+	crc = CRCShift ^ crc_table[tLookup];
+}
+uint16_t crcsum(void* message, unsigned long length)
+{
+	uint16_t crc = CRC_INIT;
+	int i;
   for(i = 0; i < length; i++)
     {
-      CRC(crc, message[i]);
+      CRC(crc, ((char*) message)[i]);
     }
   return crc;
 }
@@ -67,14 +70,12 @@ unsigned short crcsum(const unsigned char* message, unsigned long length,
  
  void AddCRC(SDalekMotorPacket* pPacket)
  {
-  unsigned long crc;
+	 uint16_t crc;
   pPacket->i16PacketRC = 0;
-  crc = crcsum((unsigned char*)pPacket, sizeof(SDalekMotorPacket), CRC_INIT);
+  crc = crcsum(pPacket, sizeof(SDalekMotorPacket));
   pPacket->i16PacketRC = crc;
  }
  bool CheckCRC(SDalekMotorPacket* pPacket)
  {
-	 unsigned long crc;
-	 crc = crcsum((unsigned char*)pPacket, sizeof(SDalekMotorPacket) , CRC_INIT);
-	 return crc == 0;
+	 return crcsum(pPacket, sizeof(SDalekMotorPacket)) == 0;
  }

@@ -47,7 +47,9 @@ void loop() {
     {
       cBytesOfCurrentPacketObtained = 0;
       LastRecievedPacket = CurrentAssemblingPacket;
-      if(CheckCRC(&LastRecievedPacket))
+	  uint16_t packetCRC = LastRecievedPacket.i16PacketRC;
+	  AddCRC(&LastRecievedPacket);
+	  if (LastRecievedPacket.i16PacketRC == packetCRC)
       {
         ulLastPacket = ulThisLoopTime;
         Serial.write("Packet recieved, passed CRC\n\r");
@@ -56,8 +58,9 @@ void loop() {
       }
       else
       {
+		  
 		  char rgcBuf[50];
-		  sprintf(rgcBuf, "Packet recieved, failed CRC would be 0x%02X 0x%02X\n\r",LastRecievedPacket.byPacketDataX,LastRecievedPacket.byPacketDataY);
+		  sprintf(rgcBuf, "Packet recieved, failed CRC 0x%02X, 0x%02X\n\r",LastRecievedPacket.i16PacketRC,packetCRC);
 		  Serial.write(rgcBuf);
         //Dump out anything in the serial port, to clear anything trashed
         while(Serial.available())
@@ -68,11 +71,11 @@ void loop() {
   }
   
   if(ulThisLoopTime > (unsigned long)5000)
-  if(ulThisLoopTime - ulLastData > ((unsigned long)250))
+  if(ulThisLoopTime - ulLastData > ((unsigned long)2500))
   {
     cBytesOfCurrentPacketObtained = 0;
   }
-  if(ulThisLoopTime - ulLastPacket > ((unsigned long) 8000))
+  if(ulThisLoopTime - ulLastPacket > ((unsigned long) 80000))
   {
       ulLastData  = ulLastPacket = ulThisLoopTime;
       cmLeftMotor.SetMotorSpeed(0);

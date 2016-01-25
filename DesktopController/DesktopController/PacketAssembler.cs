@@ -54,26 +54,25 @@ namespace DesktopController
 		  0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78
 		};
 		static UInt16 CRC_Init = 0xFFFF;
-		UInt16 BuildCRC(UInt16 oldCrc, byte newByte)
-		{
-			return (UInt16)(((oldCrc << 8) ^ crc_table[((oldCrc >> 8) ^ newByte)] ) & 0xffff);
-		}
-		void AddCRC()
+        void BuildCRC(ref UInt16 crcVal, byte newchar)
+        {
+            UInt16 CRCShift = (UInt16)((crcVal << 8) & 0x00ff);
+            UInt16 tLookup = (UInt16)(((UInt16)(crcVal>>8) ^ newchar) & 0x00ff);
+            crcVal =(UInt16)( CRCShift ^ crc_table[tLookup] );
+        }
+        void AddCRC()
 		{
 			UInt16 crc = CRC_Init;
-			crc = BuildCRC(crc, thisPacket.byPacketSize);
-			crc = BuildCRC(crc, thisPacket.byPacketVersion);
-            crc = BuildCRC(crc, thisPacket.byPacketID);
-            crc = BuildCRC(crc, thisPacket.byDeviceID);
-			crc = BuildCRC(crc, thisPacket.byPacketDataX);
-			crc = BuildCRC(crc, thisPacket.byPacketDataY);
-			crc = BuildCRC(crc, thisPacket.byPacketDataZ);
-            crc = BuildCRC(crc, 0);
-            crc = BuildCRC(crc, 0);
+            BuildCRC(ref crc, thisPacket.byPacketSize);
+            BuildCRC(ref crc, thisPacket.byPacketVersion);
+            BuildCRC(ref crc, thisPacket.byPacketID);
+            BuildCRC(ref crc, thisPacket.byDeviceID);
+			BuildCRC(ref crc, thisPacket.byPacketDataX);
+			BuildCRC(ref crc, thisPacket.byPacketDataY);
+			BuildCRC(ref crc, thisPacket.byPacketDataZ);
+            BuildCRC(ref crc, 0);
+            BuildCRC(ref crc, 0);
             thisPacket.i16PacketRC = crc;
-			UInt16 crcComp = BuildCRC(crc, (byte)(thisPacket.i16PacketRC >> 8));
-			crcComp = BuildCRC(crcComp, (byte)(thisPacket.i16PacketRC & 0xFF));
-			
 		}
 		
 		public PacketAssembler(byte x, byte y, byte z)
@@ -83,7 +82,7 @@ namespace DesktopController
 			thisPacket.byPacketVersion = 1;
 			thisPacket.i16PacketRC = 0;
 
-			thisPacket.byPacketID = ++byPacketID;
+			thisPacket.byPacketID = byPacketID;
 			thisPacket.byDeviceID = 0;
 			thisPacket.byPacketDataX = x;
 			thisPacket.byPacketDataY = y;
