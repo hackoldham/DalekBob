@@ -81,7 +81,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pbMotorL.Location = new System.Drawing.Point(157, 12);
-            this.pbMotorL.Maximum = 128;
+            this.pbMotorL.Maximum = 255;
             this.pbMotorL.Name = "pbMotorL";
             this.pbMotorL.Size = new System.Drawing.Size(100, 23);
             this.pbMotorL.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
@@ -93,7 +93,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pbMotorR.Location = new System.Drawing.Point(157, 53);
-            this.pbMotorR.Maximum = 128;
+            this.pbMotorR.Maximum = 255;
             this.pbMotorR.Name = "pbMotorR";
             this.pbMotorR.Size = new System.Drawing.Size(100, 23);
             this.pbMotorR.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
@@ -173,7 +173,6 @@
             // timer1
             // 
             this.timer1.Enabled = true;
-            this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // spUsbOut

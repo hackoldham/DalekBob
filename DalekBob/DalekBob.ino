@@ -71,11 +71,11 @@ void loop() {
   }
   
   if(ulThisLoopTime > (unsigned long)5000)
-  if(ulThisLoopTime - ulLastData > ((unsigned long)2500))
+  if(ulThisLoopTime - ulLastData > ((unsigned long)50))
   {
     cBytesOfCurrentPacketObtained = 0;
   }
-  if(ulThisLoopTime - ulLastPacket > ((unsigned long) 80000))
+  if(ulThisLoopTime - ulLastPacket > ((unsigned long) 500))
   {
       ulLastData  = ulLastPacket = ulThisLoopTime;
       cmLeftMotor.SetMotorSpeed(0);

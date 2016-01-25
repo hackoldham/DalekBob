@@ -14,16 +14,18 @@ namespace DesktopController
 		{
 			InitializeComponent();
 		}
-		void UpdateMotors()
+
+        byte byLMotor = 0;
+        byte byRMotor = 0;
+        void UpdateMotors()
 		{
-			byte byLMotor=0;
-			byte byRMotor = 0;
-			if (sbDriveSpeed.Value != 0)
+            byLMotor = 0;
+            byRMotor = 0;
+            if (sbDriveSpeed.Value != 0)
 			{
 				byLMotor = byRMotor = (byte)sbDriveSpeed.Value;
 				if (sbDriveSpeed.Value > 0)
 				{
-					
 					pbMotorL.ForeColor = Color.Red;
 					pbMotorR.ForeColor = Color.Red;
 				}
@@ -137,7 +139,7 @@ namespace DesktopController
         private void timer1_Tick(object sender, EventArgs e)
         {
             UpdateMotors();
-            PacketAssembler nPacket = new PacketAssembler((Byte)pbMotorL.Value, (Byte)pbMotorR.Value, 0);
+            PacketAssembler nPacket = new PacketAssembler((Byte)(byLMotor+127), (Byte)(byRMotor+127), 0);
             if (!spUsbOut.IsOpen)
                 spUsbOut.Open();
             spUsbOut.Write(nPacket.getBytes(), 0, nPacket.thisPacket.byPacketSize + 1);
