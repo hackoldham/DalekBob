@@ -8,7 +8,7 @@ class CMotor
   public:
   CMotor(char cForwardEnablePin, char cReverseEnablePin, char cForwardPWM, char cReversePWM)
   {
-    m_cFEnable = cReverseEnablePin;
+    m_cFEnable = cForwardEnablePin;
     m_cREnable = cReverseEnablePin;
     m_cFPWM = cForwardPWM;
     m_cRPWM = cReversePWM;
@@ -27,8 +27,13 @@ class CMotor
     digitalWrite(m_cREnable, LOW);
     analogWrite(m_cFPWM, 0);
     analogWrite(m_cRPWM, 0);
-    if(cNewSpeed & 0b10000000)
+	if (cNewSpeed == 127)
+	{
+
+	}
+    else if(cNewSpeed & 0b10000000)
     {
+		cNewSpeed = 127 - cNewSpeed;
       digitalWrite(m_cFEnable, LOW);
       digitalWrite(m_cREnable, HIGH);
       analogWrite(m_cFPWM, 0);
