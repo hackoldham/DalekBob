@@ -56,7 +56,7 @@ namespace DesktopController
 		static UInt16 CRC_Init = 0xFFFF;
         void BuildCRC(ref UInt16 crcVal, byte newchar)
         {
-            UInt16 CRCShift = (UInt16)((crcVal << 8) & 0x00ff);
+            UInt16 CRCShift = (UInt16)((crcVal << 8) & 0xff00);
             UInt16 tLookup = (UInt16)(((UInt16)(crcVal>>8) ^ newchar) & 0x00ff);
             crcVal =(UInt16)( CRCShift ^ crc_table[tLookup] );
         }

@@ -5,7 +5,8 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
+using System.Net;
+using System.Net.Sockets;
 namespace DesktopController
 {
 	public partial class Form1 : Form
@@ -14,7 +15,9 @@ namespace DesktopController
 		{
 			InitializeComponent();
 		}
-
+        //Socket sNetSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.IPv4);
+        UdpClient uClient = new UdpClient(8080, AddressFamily.InterNetwork);
+        IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse("255.255.255.255"), 8080);
         byte byLMotor = 0;
         byte byRMotor = 0;
         void UpdateMotors()
@@ -82,8 +85,8 @@ namespace DesktopController
 
 		private void Form1_Load(object sender, EventArgs e)
 		{
-
-		}
+            uClient.EnableBroadcast = true;
+        }
 
 		private void sbRotation_ValueChanged(object sender, EventArgs e)
 		{
@@ -140,7 +143,9 @@ namespace DesktopController
         {
             UpdateMotors();
             PacketAssembler nPacket = new PacketAssembler((Byte)(byLMotor+127), (Byte)(byRMotor+127), 0);
-            if (!spUsbOut.IsOpen)
+            
+            uClient.Send(nPacket.getBytes(), nPacket.thisPacket.byPacketSize + 1, ipEndPoint);
+            /*if (!spUsbOut.IsOpen)
                 spUsbOut.Open();
             spUsbOut.Write(nPacket.getBytes(), 0, nPacket.thisPacket.byPacketSize + 1);
             while (spUsbOut.BytesToRead > 0)
@@ -149,7 +154,31 @@ namespace DesktopController
                 if (textBox1.Text.Contains("\r"))
                     textBox1.Text = "";
                 textBox1.Text += c;
+            }*/
+        }
+        PortSelect pSelect;
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            pSelect = new PortSelect(this);
+            pSelect.Show(this);
+        }
+        public void UpdateSerialPort(System.IO.Ports.SerialPort sPort, string strPortID)
+        {
+            spUsbOut = sPort;
+            txtOutput.Text = strPortID;
+            try
+            {
+                spUsbOut.Open();
             }
+            catch (Exception ex)
+            {
+                txtOutput.Text = ex.ToString();
+            }
+        }
+
+        private void radioButton1_ClientSizeChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

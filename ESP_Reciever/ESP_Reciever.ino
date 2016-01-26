@@ -43,26 +43,43 @@ void setup() {
   //Listen for UDP Packets
   broadcastListener.begin(8080);
 
+  Serial.write("Serial 0 out");
+  Serial1.write("Serial 1 out");
+
 }
 
 void loop() {
-  if (broadcastListener.available() >= sizeof(SDalekMotorPacket))
-  {
-    broadcastListener.read((char*)&packetStorage, sizeof(SDalekMotorPacket));
-    int i16CurrentCRC = packetStorage.i16PacketRC;
-    AddCRC(&packetStorage);
-    if (packetStorage.i16PacketRC)
-    {
-      Serial.print("Packet failed checksum!\n\r");
-      //Dump all the things
-      while (broadcastListener.available())
-        broadcastListener.read();
-    }
-    else
-    {
-      Serial.print("Packet passed checksum!\n\r");
-      packetStorage.i16PacketRC = i16CurrentCRC;
-      Serial1.write((char*)&packetStorage, sizeof(SDalekMotorPacket));
-    }
-  }
+	if (broadcastListener.parsePacket())
+	{
+		broadcastListener.read((char*)&packetStorage, sizeof(SDalekMotorPacket));
+		int i16CurrentCRC = packetStorage.i16PacketRC;
+		AddCRC(&packetStorage);
+		char string[60];
+		sprintf(string, "CRC Expect: 0x%04X Got: 0x%04X", i16CurrentCRC, packetStorage.i16PacketRC);
+		Serial.write(string);
+		sprintf(string, "Data appears: 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%04X ",
+			packetStorage.byPacketSize,
+			packetStorage.byPacketVersion,
+			packetStorage.byPacketID,
+			packetStorage.byDeviceID,
+			packetStorage.byPacketDataX,
+			packetStorage.byPacketDataY,
+			packetStorage.byPacketDataZ,
+			packetStorage.i16PacketRC);
+		Serial.write(string);
+		if (packetStorage.i16PacketRC != i16CurrentCRC)
+		{
+			Serial.print("Packet failed checksum!\n\r");
+			//Dump all the things
+			while (broadcastListener.available())
+				broadcastListener.read();
+		}
+		else
+		{
+			Serial.print("Packet passed checksum!\n\r");
+			packetStorage.i16PacketRC = i16CurrentCRC;
+			Serial1.write((char*)&packetStorage, sizeof(SDalekMotorPacket));
+		}
+	}
 }
+

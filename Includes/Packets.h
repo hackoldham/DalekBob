@@ -49,10 +49,10 @@ static const unsigned short crc_table[256] = {
   0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78
 };
  #define CRC_INIT 0xFFFF
-void CRC(uint16_t& crc, char newchar)
+void buildCRC(uint16_t& crc, char newchar)
 {
-	uint16_t CRCShift = (crc << 8) & 0x00ff;
-	uint16_t tLookup = ((uint16_t)(crc>>8) ^ newchar) & 0x00ff;
+	uint16_t CRCShift = (uint16_t)((crc << 8) & 0xff00);
+	uint16_t tLookup = (uint16_t)(((uint16_t)(crc>>8) ^ newchar) & 0x00ff);
 	
 	crc = CRCShift ^ crc_table[tLookup];
 }
@@ -60,9 +60,9 @@ uint16_t crcsum(void* message, unsigned long length)
 {
 	uint16_t crc = CRC_INIT;
 	int i;
-  for(i = 0; i < length; i++)
+  for(i = 0; i < 9; i++)
     {
-      CRC(crc, ((char*) message)[i]);
+		buildCRC(crc, ((char*) message)[i]);
     }
   return crc;
 }
