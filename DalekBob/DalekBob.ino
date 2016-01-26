@@ -70,16 +70,17 @@ void loop() {
     
   }
   
-  if(ulThisLoopTime > (unsigned long)5000)
+  if(ulThisLoopTime > (unsigned long)500)
   if(ulThisLoopTime - ulLastData > ((unsigned long)50))
   {
     cBytesOfCurrentPacketObtained = 0;
+	ulLastData = ulThisLoopTime;
   }
   if(ulThisLoopTime - ulLastPacket > ((unsigned long) 500))
   {
       ulLastData  = ulLastPacket = ulThisLoopTime;
-      cmLeftMotor.SetMotorSpeed(0);
-      cmRightMotor.SetMotorSpeed(0);
+      cmLeftMotor.SetMotorSpeed(127);
+      cmRightMotor.SetMotorSpeed(127);
       Serial.write("Recieve timeout: Motor Shutdown\n\r");
   }
   delay(10);
