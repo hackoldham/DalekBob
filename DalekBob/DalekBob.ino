@@ -49,17 +49,19 @@ void loop() {
       LastRecievedPacket = CurrentAssemblingPacket;
 	  uint16_t packetCRC = LastRecievedPacket.i16PacketRC;
 	  AddCRC(&LastRecievedPacket);
+	  char rgcBuf[50];
 	  if (LastRecievedPacket.i16PacketRC == packetCRC)
       {
         ulLastPacket = ulThisLoopTime;
-        Serial.write("Packet recieved, passed CRC\n\r");
+		sprintf(rgcBuf, "Packet recieved, passsed CRC 0x%02X, 0x%02X\n\r", LastRecievedPacket.i16PacketRC, packetCRC);
+		Serial.write(rgcBuf);
         cmLeftMotor.SetMotorSpeed(LastRecievedPacket.byPacketDataX);
         cmRightMotor.SetMotorSpeed(LastRecievedPacket.byPacketDataY);
       }
       else
       {
 		  
-		  char rgcBuf[50];
+		  
 		  sprintf(rgcBuf, "Packet recieved, failed CRC 0x%02X, 0x%02X\n\r",LastRecievedPacket.i16PacketRC,packetCRC);
 		  Serial.write(rgcBuf);
         //Dump out anything in the serial port, to clear anything trashed

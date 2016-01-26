@@ -143,24 +143,27 @@ namespace DesktopController
         {
             UpdateMotors();
             PacketAssembler nPacket = new PacketAssembler((Byte)(byLMotor+127), (Byte)(byRMotor+127), 0);
-            
-            uClient.Send(nPacket.getBytes(), nPacket.thisPacket.byPacketSize + 1, ipEndPoint);
-            /*if (!spUsbOut.IsOpen)
-                spUsbOut.Open();
-            spUsbOut.Write(nPacket.getBytes(), 0, nPacket.thisPacket.byPacketSize + 1);
-            while (spUsbOut.BytesToRead > 0)
+            if (rbBroadcast.Checked)
+                uClient.Send(nPacket.getBytes(), nPacket.thisPacket.byPacketSize + 1, ipEndPoint);
+            if (rbSerial.Checked)
             {
-                char c = (char)spUsbOut.ReadChar();
-                if (textBox1.Text.Contains("\r"))
-                    textBox1.Text = "";
-                textBox1.Text += c;
-            }*/
+                if (!spUsbOut.IsOpen)
+                    spUsbOut.Open();
+                spUsbOut.Write(nPacket.getBytes(), 0, nPacket.thisPacket.byPacketSize + 1);
+                while (spUsbOut.BytesToRead > 0)
+                {
+                    char c = (char)spUsbOut.ReadChar();
+                    if (textBox1.Text.Contains("\r"))
+                        textBox1.Text = "";
+                    textBox1.Text += c;
+                }
+            }
         }
-        PortSelect pSelect;
+       // PortSelect pSelect;
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
-            pSelect = new PortSelect(this);
-            pSelect.Show(this);
+            //pSelect = new PortSelect(this);
+           // pSelect.Show(this);
         }
         public void UpdateSerialPort(System.IO.Ports.SerialPort sPort, string strPortID)
         {
@@ -177,6 +180,11 @@ namespace DesktopController
         }
 
         private void radioButton1_ClientSizeChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void radioButton1_CheckedChanged_1(object sender, EventArgs e)
         {
 
         }

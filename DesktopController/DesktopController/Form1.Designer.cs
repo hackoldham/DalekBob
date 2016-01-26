@@ -42,8 +42,8 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.spUsbOut = new System.IO.Ports.SerialPort(this.components);
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.rbSerial = new System.Windows.Forms.RadioButton();
+            this.rbBroadcast = new System.Windows.Forms.RadioButton();
             this.txtOutput = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
@@ -160,31 +160,32 @@
             // spUsbOut
             // 
             this.spUsbOut.BaudRate = 115200;
-            this.spUsbOut.PortName = "COM4";
+            this.spUsbOut.PortName = "COM16";
             // 
-            // radioButton1
+            // rbSerial
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(9, 163);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(71, 17);
-            this.radioButton1.TabIndex = 11;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Serial Out";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.ClientSizeChanged += new System.EventHandler(this.radioButton1_ClientSizeChanged);
-            this.radioButton1.Click += new System.EventHandler(this.radioButton1_CheckedChanged);
+            this.rbSerial.AutoSize = true;
+            this.rbSerial.Location = new System.Drawing.Point(9, 163);
+            this.rbSerial.Name = "rbSerial";
+            this.rbSerial.Size = new System.Drawing.Size(71, 17);
+            this.rbSerial.TabIndex = 11;
+            this.rbSerial.TabStop = true;
+            this.rbSerial.Text = "Serial Out";
+            this.rbSerial.UseVisualStyleBackColor = true;
+            this.rbSerial.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged_1);
+            this.rbSerial.ClientSizeChanged += new System.EventHandler(this.radioButton1_ClientSizeChanged);
+            this.rbSerial.Click += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
-            // radioButton2
+            // rbBroadcast
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(157, 163);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(73, 17);
-            this.radioButton2.TabIndex = 12;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Broadcast";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.rbBroadcast.AutoSize = true;
+            this.rbBroadcast.Location = new System.Drawing.Point(157, 163);
+            this.rbBroadcast.Name = "rbBroadcast";
+            this.rbBroadcast.Size = new System.Drawing.Size(73, 17);
+            this.rbBroadcast.TabIndex = 12;
+            this.rbBroadcast.TabStop = true;
+            this.rbBroadcast.Text = "Broadcast";
+            this.rbBroadcast.UseVisualStyleBackColor = true;
             // 
             // txtOutput
             // 
@@ -199,8 +200,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(512, 192);
             this.Controls.Add(this.txtOutput);
-            this.Controls.Add(this.radioButton2);
-            this.Controls.Add(this.radioButton1);
+            this.Controls.Add(this.rbBroadcast);
+            this.Controls.Add(this.rbSerial);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -238,8 +239,8 @@
 		private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Timer timer1;
         private System.IO.Ports.SerialPort spUsbOut;
-        private System.Windows.Forms.RadioButton radioButton1;
-        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton rbSerial;
+        private System.Windows.Forms.RadioButton rbBroadcast;
         private System.Windows.Forms.TextBox txtOutput;
     }
 }

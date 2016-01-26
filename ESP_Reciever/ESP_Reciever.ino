@@ -45,7 +45,19 @@ void setup() {
 
   Serial.write("Serial 0 out");
   Serial1.write("Serial 1 out");
-
+  SDalekMotorPacket crcChecker;
+  crcChecker.byPacketSize = 8;
+  crcChecker.byPacketVersion = 1;
+  crcChecker.byPacketID = 0;
+  crcChecker.byDeviceID = 0;
+  crcChecker.byPacketDataX = 127;
+  crcChecker.byPacketDataY = 127;
+  crcChecker.byPacketDataZ = 0;
+  crcChecker.i16PacketRC = 0;
+  AddCRC(&crcChecker);
+  char rgc[64];
+  sprintf(rgc, "Crc recorded is 0x%04X", crcChecker.i16PacketRC);
+  Serial.write(rgc);
 }
 
 void loop() {
