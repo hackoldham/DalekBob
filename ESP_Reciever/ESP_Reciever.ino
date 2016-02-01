@@ -26,7 +26,10 @@
 #define MAX_SRV_CLIENTS 1
 const char* ssid = "DalekBob";
 const char* password = "Exterminate";
-
+//const char* ssidClient = "HackOldham-2G";
+//const char* passClient = "Decafbad001";
+const char* ssidClient = "VM22843224";
+const char* passClient = "qtzczbwj";
 WiFiUDP broadcastListener;
 SDalekMotorPacket packetStorage;
 
@@ -39,7 +42,8 @@ void setup() {
   Serial1.begin(115200);
 
   //Host Wifi network
-  WiFi.softAP(ssid, password);
+  //WiFi.softAP(ssid, password);
+  WiFi.begin(ssidClient, passClient);
   //Listen for UDP Packets
   broadcastListener.begin(8080);
 
@@ -63,22 +67,29 @@ void setup() {
 void loop() {
 	if (broadcastListener.parsePacket())
 	{
-		broadcastListener.read((char*)&packetStorage, sizeof(SDalekMotorPacket));
-		int i16CurrentCRC = packetStorage.i16PacketRC;
-		AddCRC(&packetStorage);
 		char string[60];
-		sprintf(string, "CRC Expect: 0x%04X Got: 0x%04X", i16CurrentCRC, packetStorage.i16PacketRC);
+		char UDPBuf[20];
+		broadcastListener.read(UDPBuf, 20);
+		
+		sprintf(string, "Read Data: 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%04X\n",
+			packetStorage.byPacketSize = UDPBuf[0],
+			packetStorage.byPacketVersion = UDPBuf[1],
+			packetStorage.byPacketID = UDPBuf[2],
+			packetStorage.byDeviceID = UDPBuf[3],
+			packetStorage.byPacketDataX = UDPBuf[4],
+			packetStorage.byPacketDataY = UDPBuf[5],
+			packetStorage.byPacketDataZ = UDPBuf[6],
+			packetStorage.i16PacketRC = ((uint16)UDPBuf[8]) << 8 | UDPBuf[7]);
 		Serial.write(string);
-		sprintf(string, "Data appears: 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%04X ",
-			packetStorage.byPacketSize,
-			packetStorage.byPacketVersion,
-			packetStorage.byPacketID,
-			packetStorage.byDeviceID,
-			packetStorage.byPacketDataX,
-			packetStorage.byPacketDataY,
-			packetStorage.byPacketDataZ,
-			packetStorage.i16PacketRC);
+
+		sprintf(string, "\nCRC in packet: 0x%04X\n", packetStorage.i16PacketRC);
 		Serial.write(string);
+		uint16_t i16CurrentCRC = packetStorage.i16PacketRC;
+		AddCRC(&packetStorage);
+		
+		sprintf(string, "CRC Calculated: 0x%04X\n", i16CurrentCRC, packetStorage.i16PacketRC);
+		Serial.write(string);
+		
 		if (packetStorage.i16PacketRC != i16CurrentCRC)
 		{
 			Serial.print("Packet failed checksum!\n\r");
