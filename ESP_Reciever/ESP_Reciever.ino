@@ -26,10 +26,8 @@
 #define MAX_SRV_CLIENTS 1
 const char* ssid = "DalekBob";
 const char* password = "Exterminate";
-//const char* ssidClient = "HackOldham-2G";
-//const char* passClient = "Decafbad001";
-const char* ssidClient = "VM22843224";
-const char* passClient = "qtzczbwj";
+const char* ssidClient = "";
+const char* passClient = "";
 WiFiUDP broadcastListener;
 SDalekMotorPacket packetStorage;
 
