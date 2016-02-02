@@ -22,48 +22,43 @@ namespace DesktopController
         byte byRMotor = 0;
         void UpdateMotors()
 		{
-            byLMotor = 0;
-            byRMotor = 0;
+            byLMotor = 127;
+            byRMotor = 127;
             if (sbDriveSpeed.Value != 0)
 			{
-				byLMotor = byRMotor = (byte)sbDriveSpeed.Value;
-				if (sbDriveSpeed.Value > 0)
-				{
-					pbMotorL.ForeColor = Color.Red;
-					pbMotorR.ForeColor = Color.Red;
-				}
-				else
-				{
-					pbMotorL.ForeColor = Color.Green;
-					pbMotorR.ForeColor = Color.Green;
-				}
-				pbMotorL.Value = Math.Max(sbDriveSpeed.Value, sbDriveSpeed.Value * -1);
-				pbMotorR.Value = Math.Max(sbDriveSpeed.Value, sbDriveSpeed.Value * -1);
+				byLMotor = byRMotor = (byte)(255 - (sbDriveSpeed.Value+127));
 			}
-			else if (sbRotation.Value != 0)
+			else if (sbRotation.Value != 127)
 			{
-				byLMotor = (byte)sbRotation.Value;
-				byRMotor = (byte)(sbRotation.Value * -1);
-				if (sbRotation.Value > 0)
-				{
-					pbMotorL.ForeColor = Color.Green;
-					pbMotorR.ForeColor = Color.Red;
-					
-				}
-				else
-				{
-					pbMotorL.ForeColor = Color.Red;
-					pbMotorR.ForeColor = Color.Green;
-				}
-				pbMotorL.Value = Math.Max(sbRotation.Value, sbRotation.Value * -1);
-				pbMotorR.Value = Math.Max(sbRotation.Value, sbRotation.Value * -1);
+				byLMotor = ((byte)sbRotation.Value);
+				byRMotor = (byte)(255 - sbRotation.Value);
+			}
+			if (byLMotor < 127)
+			{
+				pbMotorL.ForeColor = Color.Red;
+				pbMotorL.Value = 255 - (byLMotor) * 2;
+			}
+			else if (byLMotor > 127)
+			{
+				pbMotorL.ForeColor = Color.Green;
+				pbMotorL.Value = (byLMotor -127) * 2;
 			}
 			else
 			{
 				pbMotorL.Value = 0;
-				pbMotorR.Value = 0;
-	
 			}
+			if (byRMotor < 127)
+			{
+				pbMotorR.ForeColor = Color.Red;
+				pbMotorR.Value = 255 - (byRMotor) * 2;
+			}
+			else if (byRMotor > 127)
+			{
+				pbMotorR.ForeColor = Color.Green;
+				pbMotorR.Value = (byRMotor -127) * 2;
+			}
+			else
+				pbMotorR.Value = 0;
 			
 		}
 		private void sbDriveSpeed_MouseLeave(object sender, EventArgs e)
@@ -74,7 +69,7 @@ namespace DesktopController
 
 		private void sbRotation_MouseLeave(object sender, EventArgs e)
 		{
-			sbRotation.Value = 0;
+			sbRotation.Value = 127;
 			UpdateMotors();
 		}
 
@@ -122,11 +117,11 @@ namespace DesktopController
 			}
 			else if (e.KeyCode == Keys.A || e.KeyCode == Keys.Left)
 			{
-				sbRotation.Value = -127;
+				sbRotation.Value = 0;
 			}
 			else if (e.KeyCode == Keys.D || e.KeyCode == Keys.Right)
 			{
-				sbRotation.Value = 127;
+				sbRotation.Value = 255;
 			}
 			else if (e.KeyCode == Keys.S || e.KeyCode == Keys.Down)
 			{
