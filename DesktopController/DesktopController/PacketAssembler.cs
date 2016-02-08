@@ -60,8 +60,8 @@ namespace DesktopController
             UInt16 tLookup = (UInt16)(((UInt16)(crcVal>>8) ^ newchar) & 0x00ff);
             crcVal =(UInt16)( CRCShift ^ crc_table[tLookup] );
         }
-        void AddCRC()
-		{
+        public void AddCRC()
+		 {
 			UInt16 crc = CRC_Init;
             BuildCRC(ref crc, thisPacket.byPacketSize);
             BuildCRC(ref crc, thisPacket.byPacketVersion);
@@ -89,6 +89,18 @@ namespace DesktopController
 			thisPacket.byPacketDataZ = z;
 			AddCRC();
 		}
+
+		public PacketAssembler(byte[] Data)
+		{
+			thisPacket.byPacketSize = Data[0];
+			thisPacket.byPacketVersion = Data[1];
+			thisPacket.byPacketID = Data[2];
+			thisPacket.byDeviceID = Data[3];
+			thisPacket.byPacketDataX = Data[4];
+			thisPacket.byPacketDataY = Data[5];
+			thisPacket.byPacketDataZ = Data[6];
+			thisPacket.i16PacketRC = (UInt16)((Data[8] << 8) + (Data[7]));
+		}
         public byte[] getBytes()
         {
             int size = Marshal.SizeOf(thisPacket);
@@ -100,5 +112,6 @@ namespace DesktopController
             Marshal.FreeHGlobal(ptr);
             return arr;
         }
+
     }
 }

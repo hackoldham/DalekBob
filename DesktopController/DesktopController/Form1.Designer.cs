@@ -45,6 +45,7 @@
 			this.rbSerial = new System.Windows.Forms.RadioButton();
 			this.rbBroadcast = new System.Windows.Forms.RadioButton();
 			this.txtOutput = new System.Windows.Forms.TextBox();
+			this.button1 = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// sbDriveSpeed
@@ -194,11 +195,22 @@
 			this.txtOutput.Size = new System.Drawing.Size(210, 20);
 			this.txtOutput.TabIndex = 13;
 			// 
+			// button1
+			// 
+			this.button1.Location = new System.Drawing.Point(12, 186);
+			this.button1.Name = "button1";
+			this.button1.Size = new System.Drawing.Size(108, 23);
+			this.button1.TabIndex = 14;
+			this.button1.Text = "InterceptSerial";
+			this.button1.UseVisualStyleBackColor = true;
+			this.button1.Click += new System.EventHandler(this.button1_Click);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(512, 192);
+			this.ClientSize = new System.Drawing.Size(512, 219);
+			this.Controls.Add(this.button1);
 			this.Controls.Add(this.txtOutput);
 			this.Controls.Add(this.rbBroadcast);
 			this.Controls.Add(this.rbSerial);
@@ -242,6 +254,7 @@
         private System.Windows.Forms.RadioButton rbSerial;
         private System.Windows.Forms.RadioButton rbBroadcast;
         private System.Windows.Forms.TextBox txtOutput;
+		private System.Windows.Forms.Button button1;
     }
 }
 
