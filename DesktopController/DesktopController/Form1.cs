@@ -183,5 +183,11 @@ namespace DesktopController
         {
 
         }
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			SerialIntercept sIForm = new SerialIntercept();
+			sIForm.Show();
+		}
     }
 }
