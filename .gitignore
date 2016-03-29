@@ -6,3 +6,6 @@
 /ESP_Reciever/Packets.h
 /JoyStick/Packets.h
 /JoyStick/MotorDriver.h
+/SerialInjector/Packets.h
+/SerialInjector/MotorDriver.h
+/SerialInjector/Debug
