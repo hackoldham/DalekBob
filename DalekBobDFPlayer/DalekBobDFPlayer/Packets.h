@@ -11,8 +11,7 @@ struct SDalekMotorPacket
 	uint8_t byDeviceID;
 	uint8_t byPacketDataX, byPacketDataY, byPacketDataZ;
 	uint16_t i16PacketRC = 0;
-}__attribute__((packed)) ;
-
+} __attribute__((packed));
 enum eDeviceID
 {
 	eDevice_MotorControl,
@@ -22,6 +21,7 @@ enum eDeviceID
 	eDevice_EyeStalkLight,
 	eDevice_Count
 };
+
 /* CRC16 Definitions */
 static const unsigned short crc_table[256] = {
 	0x0000, 0x1189, 0x2312, 0x329b, 0x4624, 0x57ad, 0x6536, 0x74bf,
